@@ -73,6 +73,7 @@
     const playButton = document.querySelector('.play');
     const level = document.querySelector('select[name="level"]');
     let score = 0;
+    let activity = [];
     let lastHole;
     let timeUp = false;
     let difficulty = localStorage.getItem('difficulty') !== null ?
@@ -135,6 +136,9 @@
       if (!e.isTrusted) return;
 
       if (!timeUp && this.parentNode.classList.contains('up')) {
+        activity.push({
+          clicked_at: new Date().getTime()
+        });
         this.parentNode.classList.remove('up'); // Cek timeUp
         score++;
         scoreBoard.innerText = score;
@@ -142,21 +146,51 @@
       }
     }
 
+    function calculateAverageTime(activity) {
+      if (activity.length < 2) {
+        throw new Error('Not enough data to calculate average time.');
+      }
+
+      // Extract timestamps
+      const timestamps = activity.map(item => item.clicked_at);
+
+      // Calculate differences between consecutive timestamps
+      const differences = [];
+      for (let i = 1; i < timestamps.length; i++) {
+        differences.push(timestamps[i] - timestamps[i - 1]);
+      }
+
+      // Calculate average of differences
+      const totalDifference = differences.reduce((sum, diff) => sum + diff, 0);
+      const averageDifference = totalDifference / differences.length;
+
+      return averageDifference;
+    }
+
     const displayRankScore = () => {
       const tableBody = document.querySelector('#table tbody');
       if (timeUp) {
 
         let currentLevel = level.value;
-        console.log('Adding score to rankScore:', score); // Debugging
+        const averageClick = calculateAverageTime(activity);
+        console.log('average click', averageClick);
 
-        rankScore.push({
-          score,
-          level: currentLevel
-        });
+        if (averageClick < 500) {
+          alert("You're detected cheating, you're banned");
+          console.log("You're detected cheating, you're banned")
+        } else {
+          console.log('Adding score to rankScore:', score); // Debugging
+          rankScore.push({
+            score,
+            activity,
+            averageClick,
+            level: currentLevel
+          });
 
-        rankScore.sort((a, b) => b.score - a.score);
-        rankScore = rankScore.slice(0, 5);
-        updateRankScore();
+          rankScore.sort((a, b) => b.score - a.score);
+          rankScore = rankScore.slice(0, 5);
+          updateRankScore();
+        }
       }
 
 
