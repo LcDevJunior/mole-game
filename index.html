@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Whack A Mole!</title>
+  <link href='https://fonts.googleapis.com/css?family=Amatic+SC:400,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="https://fav.farm/🔥" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="start-game">
+      <button class="play">Start!</button>
+      <select name="level">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+
+    <div class="score-container">
+      <h1>Whack-a-mole! <span class="score">0</span></h1>
+    </div>
+
+    <div class="game">
+      <div class="hole hole1">
+        <div class="mole"></div>
+      </div>
+      <div class="hole hole2">
+        <div class="mole"></div>
+      </div>
+      <div class="hole hole3">
+        <div class="mole"></div>
+      </div>
+      <div class="hole hole4">
+        <div class="mole"></div>
+      </div>
+      <div class="hole hole5">
+        <div class="mole"></div>
+      </div>
+      <div class="hole hole6">
+        <div class="mole"></div>
+
+      </div>
+    </div>
+
+    <div class="score-ranking">
+      <h1 class="score-title">5 Highest Score</h1>
+      <table id="table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Score</th>
+            <th>Level</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const holes = document.querySelectorAll('.hole');
+    const holesContainer = document.querySelector('.game');
+    const scoreBoard = document.querySelector('.score');
+    const moles = document.querySelectorAll('.mole');
+    const playButton = document.querySelector('.play');
+    const level = document.querySelector('select[name="level"]');
+    let score = 0;
+    let lastHole;
+    let timeUp = false;
+    let difficulty = localStorage.getItem('difficulty') !== null ?
+      localStorage.getItem('difficulty') : 'medium';
+
+
+    let rankScore = localStorage.getItem('rankScore') !== null ? JSON.parse(localStorage.getItem('rankScore')) : [];
+
+
+    const randomTime = (min, max) => {
+      return Math.round(Math.random() * (max - min) + min);
+    }
+
+    const randomHoles = (holes) => {
+      const idx = Math.floor(Math.random() * holes.length);
+      const hole = holes[idx];
+
+      if (hole === lastHole) {
+        console.log('its same');
+        return randomHoles(holes);
+      }
+
+      lastHole = hole;
+      return hole;
+    }
+
+    const peek = () => {
+      let time = gameLevel(level);
+      let h = randomHoles(holes)
+      h.classList.add('up');
+      setTimeout(() => {
+        h.classList.remove('up');
+        if (!timeUp) peek();
+      }, time);
+
+    }
+
+    const handleStartGame = () => {
+      scoreBoard.innerText = 0;
+      score = 0;
+      timeUp = false;
+      level.disabled = true;
+
+      scrollToGame();
+      peek();
+      setTimeout(() => {
+        timeUp = true;
+        level.disabled = false;
+        displayRankScore();
+        console.log('time is up');
+      }, 20000);
+    }
+
+    const scrollToGame = () => {
+      let top = holesContainer.offsetTop;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+
+    function bonk(e) {
+      if (!e.isTrusted) return;
+
+      if (!timeUp && this.parentNode.classList.contains('up')) {
+        this.parentNode.classList.remove('up'); // Cek timeUp
+        score++;
+        scoreBoard.innerText = score;
+        console.log('Score incremented in bonk:', score);
+      }
+    }
+
+    const displayRankScore = () => {
+      const tableBody = document.querySelector('#table tbody');
+      if (timeUp) {
+
+        let currentLevel = level.value;
+        console.log('Adding score to rankScore:', score); // Debugging
+
+        rankScore.push({
+          score,
+          level: currentLevel
+        });
+
+        rankScore.sort((a, b) => b.score - a.score);
+        rankScore = rankScore.slice(0, 5);
+        updateRankScore();
+      }
+
+
+      tableBody.innerHTML = '';
+      rankScore.forEach((score, index) => {
+        const row = `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${score.score}</td>
+        <td>${score.level}</td>
+      </tr>
+    `;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    const gameLevel = (level) => {
+      let difficultyValue = level.value;
+
+      switch (difficultyValue) {
+        case 'easy':
+          return randomTime(1000, 1200);
+          break;
+        case 'medium':
+          return randomTime(1000, 1500);
+          break;
+        case 'hard':
+          return randomTime(300, 500);
+      }
+    }
+
+
+    const updateRankScore = () => {
+      localStorage.setItem('rankScore', JSON.stringify(rankScore));
+    }
+
+    displayRankScore();
+
+
+    moles.forEach((mole) => mole.addEventListener('click', bonk));
+    playButton.addEventListener('click', handleStartGame);
+    level.addEventListener('change', (e) => {
+      difficulty = e.target.value;
+      localStorage.setItem('difficulty', difficulty);
+    });
+    level.value = localStorage.getItem('difficulty') !== null ?
+      localStorage.getItem('difficulty') : 'medium';
+
+  </script>
+</body>
+
+</html>
