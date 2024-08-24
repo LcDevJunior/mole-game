@@ -1,0 +1,185 @@
+html {
+  box-sizing: border-box;
+  font-size: 10px;
+  background: #ffc600;
+  min-height: 100vh;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+
+  font-family: 'Amatic SC', cursive;
+
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4rem;
+  margin: 2rem;
+}
+
+.start-game {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.start-game .time-game {
+  margin-left: .5rem;
+  text-align: center;
+}
+
+.time-game h1 {
+  font-size: 4rem;
+}
+
+.time-game p {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.start-game button {
+  padding: 1rem 2rem;
+  font-size: 2rem;
+  background-color: #3E4E5B;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-game button:hover {
+  background-color: #2b3744;
+}
+
+.start-game select {
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  border: 2px solid #3E4E5B;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #3E4E5B;
+}
+
+.score-ranking {
+  width: 80%;
+  max-width: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 90px;
+}
+
+.score-title {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  background-color: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #3E4E5B;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+th,
+td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+th {
+  font-weight: 600;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+tbody tr:last-child td {
+  border: none;
+}
+
+h1 {
+  text-align: center;
+  font-size: 10rem;
+  line-height: 1;
+  margin-bottom: 0;
+}
+
+.score {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0 3rem;
+  line-height: 1;
+  border-radius: 1rem;
+}
+
+.game {
+  width: 90%;
+  max-width: 600px;
+  height: 500px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+}
+
+
+.hole {
+  flex: 1 0 33.33%;
+  overflow: hidden;
+  position: relative;
+}
+
+.hole:after {
+  display: block;
+  background: url(dirt.svg) bottom center no-repeat;
+  background-size: contain;
+  content: '';
+  width: 100%;
+  height: 70px;
+  position: absolute;
+  z-index: 2;
+  bottom: -30px;
+}
+
+.mole {
+  background: url('mole.svg') bottom center no-repeat;
+  background-size: 60%;
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  height: 100%;
+  transition: all 0.4s;
+}
+
+.hole.up .mole {
+  top: 0;
+}
