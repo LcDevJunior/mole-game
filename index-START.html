@@ -134,9 +134,9 @@
     function bonk(e) {
       if (!e.isTrusted) return;
 
-      if (!timeUp && this.parentNode.classList.contains('up')) { // Cek timeUp
+      if (!timeUp && this.parentNode.classList.contains('up')) {
+        this.parentNode.classList.remove('up'); // Cek timeUp
         score++;
-        this.parentNode.classList.remove('up');
         scoreBoard.innerText = score;
         console.log('Score incremented in bonk:', score);
       }
